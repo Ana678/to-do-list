@@ -101,6 +101,7 @@ body{
     background-color: #F1F1F1;
     border-radius: 10px;
     padding: 20px 24px;
+    vertical-align: middle;
 }
 
 .div-list > li:hover, .list-element-create:hover{
@@ -124,7 +125,6 @@ body{
 
 .div-list > .li-done {
     background-color: #F6F3FD;
-    vertical-align: middle;
 }
 
 .div-list > .li-done > label {

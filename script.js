@@ -24,8 +24,11 @@ function createTaskElement(text) {
   checkbox.type = 'checkbox';
   checkbox.onchange = () => moveToDone(checkbox);
 
+  const label = document.createElement('label');
+  label.textContent = text;
+
   li.appendChild(checkbox);
-  li.appendChild(document.createTextNode(text));
+  li.appendChild(label);
   todoListElement.appendChild(li);
 }
 
