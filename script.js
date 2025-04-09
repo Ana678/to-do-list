@@ -73,6 +73,14 @@ function moveToDone(checkbox) {
   li.classList.add("li-done");
   checkbox.disabled = true;
 
+  const trashIcon = document.createElement('i');
+  trashIcon.classList.add('material-icons', 'delete-icon');
+  trashIcon.textContent = 'delete';
+  trashIcon.addEventListener('click', () => {
+    deleteItemFromLocalStorage(text);
+    li.remove();
+  });
+
   doneListElement.appendChild(li);
 
   // Atualiza visibilidade

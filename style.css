@@ -101,7 +101,7 @@ body{
     background-color: #F1F1F1;
     border-radius: 10px;
     padding: 20px 24px;
-    vertical-align: middle;
+    align-items: center;
 }
 
 .div-list > li:hover, .list-element-create:hover{
