@@ -69,23 +69,24 @@ function deleteItemFromLocalStorage(taskText){
 
 // Move tarefa para a lista de concluídas
 function moveToDone(checkbox) {
-  const li = checkbox.parentElement;
-  li.classList.add("li-done");
-  checkbox.disabled = true;
+    const li = checkbox.parentElement;
+    li.classList.add("li-done");
+    checkbox.disabled = true;
 
-  const trashIcon = document.createElement('i');
-  trashIcon.classList.add('material-icons', 'delete-icon');
-  trashIcon.textContent = 'delete';
-  trashIcon.addEventListener('click', () => {
-    deleteItemFromLocalStorage(text);
-    li.remove();
-  });
+    const trashIcon = document.createElement('i');
+    trashIcon.classList.add('material-icons', 'delete-icon');
+    trashIcon.textContent = 'delete';
+    trashIcon.addEventListener('click', () => {
+        deleteItemFromLocalStorage(text);
+        li.remove();
+    });
 
-  doneListElement.appendChild(li);
+    li.appendChild(trashIcon);
+    doneListElement.appendChild(li);
 
-  // Atualiza visibilidade
-  updateListVisibility();
-  saveTasksToLocalStorage();
+    // Atualiza visibilidade
+    updateListVisibility();
+    saveTasksToLocalStorage();
 }
 
 // Atualiza o que está visível: "a fazer" ou "concluído"
