@@ -29,7 +29,7 @@ body{
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    max-height: 80vh;
+    max-height: 75vh;
 }
 
 .row{
@@ -195,6 +195,12 @@ body{
     color: #FFFFFF;
     font-weight: 600;
     border: none;
+  }
+
+  .text-bottom{
+    text-align: center;
+    color: #838383;
+    font-size: 14px;
   }
 
   @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {

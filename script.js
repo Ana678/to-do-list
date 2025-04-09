@@ -19,46 +19,48 @@ function closeModal() {
 
 // Cria um item da lista "a fazer"
 function createTaskElement(text) {
-  const li = document.createElement('li');
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.onchange = () => moveToDone(checkbox);
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    li.onclick = () => moveToDone(checkbox);
+    // checkbox.onchange = () => moveToDone(checkbox);
 
-  const label = document.createElement('label');
-  label.textContent = text;
+    const label = document.createElement('label');
+    label.textContent = text;
 
-  li.appendChild(checkbox);
-  li.appendChild(label);
-  todoListElement.appendChild(li);
+    li.appendChild(checkbox);
+    li.appendChild(label);
+    todoListElement.appendChild(li);
 }
 
 // Cria um item na lista de "concluídas"
 function createTaskDoneElement(text) {
-  const li = document.createElement('li');
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.checked = true;
-  checkbox.disabled = true;
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = true;
+    checkbox.disabled = true;
 
-  const label = document.createElement('label');
-  label.textContent = text;
+    const label = document.createElement('label');
+    label.textContent = text;
 
-  const trashIcon = document.createElement('i');
-  trashIcon.classList.add('material-icons', 'delete-icon');
-  trashIcon.textContent = 'delete';
+    const trashIcon = document.createElement('i');
+    trashIcon.classList.add('material-icons', 'delete-icon');
+    trashIcon.textContent = 'delete';
 
-  // Evento de exclusão
-  trashIcon.addEventListener('click', () => {
-    deleteItemFromLocalStorage(text);
-    li.remove();
-  });
+    // Evento de exclusão
+    trashIcon.addEventListener('click', () => {
+        deleteItemFromLocalStorage(text);
+        li.remove();
+        updateTaskCounter();
+    });
 
 
-  li.classList.add("li-done");
-  li.appendChild(checkbox);
-  li.appendChild(label);
-  li.appendChild(trashIcon);
-  doneListElement.appendChild(li);
+    li.classList.add("li-done");
+    li.appendChild(checkbox);
+    li.appendChild(label);
+    li.appendChild(trashIcon);
+    doneListElement.appendChild(li);
 }
 
 function deleteItemFromLocalStorage(taskText){
@@ -70,15 +72,20 @@ function deleteItemFromLocalStorage(taskText){
 // Move tarefa para a lista de concluídas
 function moveToDone(checkbox) {
     const li = checkbox.parentElement;
+    const label = li.querySelector('label');
     li.classList.add("li-done");
+    checkbox.checked = true;
     checkbox.disabled = true;
+    li.onclick = null;
 
     const trashIcon = document.createElement('i');
     trashIcon.classList.add('material-icons', 'delete-icon');
     trashIcon.textContent = 'delete';
+
     trashIcon.addEventListener('click', () => {
-        deleteItemFromLocalStorage(li.textContent.trim());
+        deleteItemFromLocalStorage(label.textContent.trim());
         li.remove();
+        updateTaskCounter();
     });
 
     li.appendChild(trashIcon);
@@ -87,6 +94,7 @@ function moveToDone(checkbox) {
     // Atualiza visibilidade
     updateListVisibility();
     saveTasksToLocalStorage();
+    updateTaskCounter();
 }
 
 // Atualiza o que está visível: "a fazer" ou "concluído"
@@ -99,8 +107,14 @@ function updateListVisibility() {
 
 // Salva tarefas no localStorage
 function saveTasksToLocalStorage() {
-  const todoList = Array.from(todoListElement.children).map(li => li.textContent.trim());
-  const doneList = Array.from(doneListElement.children).map(li => li.textContent.trim());
+  const todoList = Array.from(todoListElement.children).map(li => {
+    const label = li.querySelector('label');
+    return label ? label.textContent.trim() : '';
+  });
+  const doneList = Array.from(doneListElement.children).map(li => {
+    const label = li.querySelector('label');
+    return label ? label.textContent.trim() : '';
+  });
 
   const data = {
     todo: todoList,
@@ -119,6 +133,7 @@ function addTaskFromModal() {
   createTaskElement(taskText);
   closeModal();
   saveTasksToLocalStorage();
+  updateTaskCounter();
 }
 
 // Carrega tarefas ao iniciar
@@ -148,15 +163,28 @@ window.onload = function () {
     todoButtonElement.classList.add("active");
     doneButtonElement.classList.remove("active");
     updateListVisibility();
+    updateTaskCounter();
   });
 
   doneButtonElement.addEventListener("click", () => {
     doneButtonElement.classList.add("active");
     todoButtonElement.classList.remove("active");
     updateListVisibility();
+    updateTaskCounter();
   });
 
   // Exibe a lista "a fazer" por padrão
   todoButtonElement.classList.add("active");
   updateListVisibility();
+  updateTaskCounter();
 };
+
+function updateTaskCounter() {
+    const totalTasks = todoListElement.children.length + doneListElement.children.length;
+    const counterElement = document.getElementById('taskCounter');
+    if(doneButtonElement.classList.contains("active")){
+        counterElement.textContent = `${doneListElement.children.length}/${totalTasks} • ${Math.round(doneListElement.children.length*100/totalTasks) || 0}% das tarefas foram feitas`;
+    }else{
+        counterElement.textContent = `${todoListElement.children.length}/${totalTasks} • ${Math.round(todoListElement.children.length*100/totalTasks) || 0}% das tarefas a serem feitas`;
+    }
+  }
