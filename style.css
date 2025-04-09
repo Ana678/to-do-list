@@ -1,0 +1,188 @@
+*{
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 0;
+    margin: 0;
+}
+
+html{
+    height: 100%;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #ded2fd;
+}
+
+.div-body{
+    width: 80%;
+    max-width: 600px;
+    height: auto;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px;
+    gap: 32px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    max-height: 80vh;
+}
+
+.row{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.row > img {
+    height: 56px;
+}
+
+.row > p {
+    margin: 0;
+}
+
+.div-addItem{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.div-addItem > input{
+    border-radius: 10px;
+    border: 1px solid #d3d3d3;
+    padding: 12px 24px;
+}
+
+.div-options{
+    display: flex;
+    gap: 16px;
+}
+
+.div-options > div{
+    padding: 8px;
+    width: 100%;
+    border-radius: 16px;
+    text-align: center;
+    background-color: #f5f5f5;
+    color: #575757;
+}
+
+.div-options > .active{
+    background-color: #a38be6;
+    color: #FFFFFF;
+}
+
+.div-options > div:not(.active):hover{
+    background-color:#F6F3FD;
+    color: #957cdb;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: scale(1.2);
+}
+
+
+.div-list{
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.div-list > li, .list-element-create{
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    background-color: #F1F1F1;
+    border-radius: 10px;
+    padding: 20px 24px;
+}
+
+.div-list > li:hover, .list-element-create:hover{
+    background-color: #F6F3FD;
+}
+
+.list-element-create{
+    justify-content: center;
+    color: #575757;
+    border: none;
+}
+
+.div-list > li > input[type="checkbox"]{
+    transform: scale(1.5);
+    margin-right: 10px;
+}
+
+.div-list > li > input[type="checkbox"]:checked{
+    accent-color: #7463A3;
+}
+
+.div-list > .li-done{
+    background-color: #F6F3FD;
+    text-decoration: line-through;
+    color: #B5A2EB;
+}
+
+.body-title{
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+
+/* Modal */
+
+/* Modal básica */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Conteúdo da modal */
+  .modal-content {
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 80%;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .content-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Botão de fechar */
+  .close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .modal-content > button{
+    padding: 8px;
+    width: 100%;
+    border-radius: 16px;
+    text-align: center;
+    background-color: #a38be6;
+    color: #FFFFFF;
+    font-weight: 600;
+    border: none;
+  }
