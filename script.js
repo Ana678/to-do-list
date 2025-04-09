@@ -77,7 +77,7 @@ function moveToDone(checkbox) {
     trashIcon.classList.add('material-icons', 'delete-icon');
     trashIcon.textContent = 'delete';
     trashIcon.addEventListener('click', () => {
-        deleteItemFromLocalStorage(text);
+        deleteItemFromLocalStorage(li.textContent.trim());
         li.remove();
     });
 
