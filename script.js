@@ -37,10 +37,31 @@ function createTaskDoneElement(text) {
   checkbox.checked = true;
   checkbox.disabled = true;
 
+  const label = document.createElement('label');
+  label.textContent = text;
+
+  const trashIcon = document.createElement('i');
+  trashIcon.classList.add('material-icons', 'delete-icon');
+  trashIcon.textContent = 'delete';
+
+  // Evento de exclusão
+  trashIcon.addEventListener('click', () => {
+    deleteItemFromLocalStorage(text);
+    li.remove();
+  });
+
+
   li.classList.add("li-done");
   li.appendChild(checkbox);
-  li.appendChild(document.createTextNode(text));
+  li.appendChild(label);
+  li.appendChild(trashIcon);
   doneListElement.appendChild(li);
+}
+
+function deleteItemFromLocalStorage(taskText){
+    const storedData = JSON.parse(localStorage.getItem('taskList')) || { todo: [], done: [] };
+    storedData.done = storedData.done.filter(item => item.trim() !== taskText.trim());
+    localStorage.setItem('taskList', JSON.stringify(storedData));
 }
 
 // Move tarefa para a lista de concluídas

@@ -122,10 +122,20 @@ body{
     accent-color: #7463A3;
 }
 
-.div-list > .li-done{
+.div-list > .li-done {
     background-color: #F6F3FD;
+    vertical-align: middle;
+}
+
+.div-list > .li-done > label {
     text-decoration: line-through;
     color: #B5A2EB;
+}
+
+.div-list > .li-done > i{
+    color: #8268c9;
+    margin-left: auto;
+    cursor: pointer;
 }
 
 .body-title{
