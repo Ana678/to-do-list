@@ -183,7 +183,7 @@ function updateTaskCounter() {
     const totalTasks = todoListElement.children.length + doneListElement.children.length;
     const counterElement = document.getElementById('taskCounter');
     if(doneButtonElement.classList.contains("active")){
-        counterElement.textContent = `${doneListElement.children.length}/${totalTasks} • ${Math.round(doneListElement.children.length*100/totalTasks) || 0}% das tarefas foram feitas`;
+        counterElement.textContent = `${doneListElement.children.length}/${totalTasks} • ${Math.round(doneListElement.children.length*100/totalTasks) || 0}% foram concluídas`;
     }else{
         counterElement.textContent = `${todoListElement.children.length}/${totalTasks} • ${Math.round(todoListElement.children.length*100/totalTasks) || 0}% das tarefas a serem feitas`;
     }
