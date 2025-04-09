@@ -1,102 +1,129 @@
+// Variáveis globais
+let todoListElement;
+let doneListElement;
+let todoButtonElement;
+let doneButtonElement;
+
 // Abre a modal
 function openModal() {
-    document.getElementById('taskModal').style.display = 'flex';
-    document.getElementById('taskInput').value = '';
-    document.getElementById('taskInput').focus();
-  }
+  document.getElementById('taskModal').style.display = 'flex';
+  const input = document.getElementById('taskInput');
+  input.value = '';
+  input.focus();
+}
 
-  // Fecha a modal
-  function closeModal() {
-    document.getElementById('taskModal').style.display = 'none';
-  }
+// Fecha a modal
+function closeModal() {
+  document.getElementById('taskModal').style.display = 'none';
+}
 
-  // Adiciona tarefa da modal
-  function addTaskFromModal() {
-    const input = document.getElementById('taskInput');
-    const taskText = input.value.trim();
-    if (!taskText) return;
+// Cria um item da lista "a fazer"
+function createTaskElement(text) {
+  const li = document.createElement('li');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.onchange = () => moveToDone(checkbox);
 
-    createTaskElement(taskText);
-    closeModal();
-    saveTasksToLocalStorage();
-  }
+  li.appendChild(checkbox);
+  li.appendChild(document.createTextNode(text));
+  todoListElement.appendChild(li);
+}
 
-  // Cria elemento na lista
-  function createTaskElement(text) {
-    const li = document.createElement('li');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.onchange = () => moveToDone(checkbox);
-    li.appendChild(checkbox);
-    li.appendChild(document.createTextNode(text));
-    document.getElementById('todoList').appendChild(li);
-  }
+// Cria um item na lista de "concluídas"
+function createTaskDoneElement(text) {
+  const li = document.createElement('li');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = true;
+  checkbox.disabled = true;
 
-  function createTaskDoneElement(text) {
-    const li = document.createElement('li');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    li.classList.add("li-done");
-    checkbox.checked = true;
-    checkbox.disabled = true;
-    li.appendChild(checkbox);
-    li.appendChild(document.createTextNode(text));
-    document.getElementById('doneList').appendChild(li);
-  }
+  li.classList.add("li-done");
+  li.appendChild(checkbox);
+  li.appendChild(document.createTextNode(text));
+  doneListElement.appendChild(li);
+}
 
-  // Mover para lista de concluídos
-  function moveToDone(checkbox) {
-    const li = checkbox.parentElement;
-    li.classList.add("li-done");
-    checkbox.disabled = true;
-    document.getElementById('doneList').appendChild(li);
-    saveTasksToLocalStorage();
-  }
+// Move tarefa para a lista de concluídas
+function moveToDone(checkbox) {
+  const li = checkbox.parentElement;
+  li.classList.add("li-done");
+  checkbox.disabled = true;
 
-  // LocalStorage
-  function saveTasksToLocalStorage() {
-    const todoList = Array.from(document.getElementById('todoList').children).map(li => li.textContent.trim());
-    const doneList = Array.from(document.getElementById('doneList').children).map(li => li.textContent.trim());
+  doneListElement.appendChild(li);
 
-    const data = {
-      todo: todoList,
-      done: doneList
-    };
-    localStorage.setItem('taskList', JSON.stringify(data));
-  }
+  // Atualiza visibilidade
+  updateListVisibility();
+  saveTasksToLocalStorage();
+}
 
-  // Carrega ao iniciar
-  window.onload = function () {
-    todoListElement = document.getElementById("todoList");
-    doneListElement = document.getElementById("doneList");
+// Atualiza o que está visível: "a fazer" ou "concluído"
+function updateListVisibility() {
+  const todoActive = todoButtonElement.classList.contains("active");
 
-    todoButtonElement = document.getElementById("todoListButton");
-    doneButtonElement = document.getElementById("doneListButton");
+  todoListElement.style.display = todoActive ? "flex" : "none";
+  doneListElement.style.display = todoActive ? "none" : "flex";
+}
 
-    const saved = localStorage.getItem('taskList');
-    if (!saved) return;
+// Salva tarefas no localStorage
+function saveTasksToLocalStorage() {
+  const todoList = Array.from(todoListElement.children).map(li => li.textContent.trim());
+  const doneList = Array.from(doneListElement.children).map(li => li.textContent.trim());
+
+  const data = {
+    todo: todoList,
+    done: doneList
+  };
+
+  localStorage.setItem('taskList', JSON.stringify(data));
+}
+
+// Adiciona nova tarefa vinda da modal
+function addTaskFromModal() {
+  const input = document.getElementById('taskInput');
+  const taskText = input.value.trim();
+  if (!taskText) return;
+
+  createTaskElement(taskText);
+  closeModal();
+  saveTasksToLocalStorage();
+}
+
+// Carrega tarefas ao iniciar
+window.onload = function () {
+  // Referência aos elementos
+  todoListElement = document.getElementById("todoList");
+  doneListElement = document.getElementById("doneList");
+  todoButtonElement = document.getElementById("todoListButton");
+  doneButtonElement = document.getElementById("doneListButton");
+
+  // Carrega do localStorage
+  const saved = localStorage.getItem('taskList');
+  if (saved) {
     const data = JSON.parse(saved);
     data.todo.forEach(task => createTaskElement(task));
     data.done.forEach(task => createTaskDoneElement(task));
+  }
 
-    setTimeout(() => {
-        doneListElement.style.display = "none";
-    }, 0);
+  document.getElementById("taskInput").addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      addTaskFromModal();
+    }
+  });
 
-    todoButtonElement.addEventListener("click", () => {
-        todoListElement.style.display = "flex";
-        doneListElement.style.display = "none";
+  // Botões para alternar as listas
+  todoButtonElement.addEventListener("click", () => {
+    todoButtonElement.classList.add("active");
+    doneButtonElement.classList.remove("active");
+    updateListVisibility();
+  });
 
-        todoButtonElement.classList.add("active");
-        doneButtonElement.classList.remove("active");
-    });
+  doneButtonElement.addEventListener("click", () => {
+    doneButtonElement.classList.add("active");
+    todoButtonElement.classList.remove("active");
+    updateListVisibility();
+  });
 
-    doneButtonElement.addEventListener("click", () => {
-        doneListElement.style.display = "flex";
-        todoListElement.style.display = "none";
-
-        doneButtonElement.classList.add("active");
-        todoButtonElement.classList.remove("active");
-    });
-
-  };
+  // Exibe a lista "a fazer" por padrão
+  todoButtonElement.classList.add("active");
+  updateListVisibility();
+};
