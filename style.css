@@ -104,6 +104,9 @@ body{
     padding: 20px 24px;
     align-items: center;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
 }
 
 .div-list > li:hover, .list-element-create:hover{

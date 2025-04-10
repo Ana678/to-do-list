@@ -228,6 +228,7 @@ function addDragEvents(element) {
     element.addEventListener('dragstart', e => {
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', 'drag-item');
+        e.dataTransfer.setDragImage(new Image(), 0, 0);
         element.classList.add('dragging');
     });
 
