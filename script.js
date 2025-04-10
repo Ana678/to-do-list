@@ -21,26 +21,29 @@ function closeModal() {
 function createTaskElement(text) {
     const li = document.createElement('li');
     li.classList.add('fade-in-up');
+    li.setAttribute('draggable', true);
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
 
-    // Evita que clique no checkbox dispare drag
-    checkbox.addEventListener('mousedown', e => e.stopPropagation());
-
-    // Move para "concluídas" ao marcar o checkbox
-    checkbox.addEventListener('change', () => {
-        if (checkbox.checked) moveToDone(checkbox);
-    });
-
     const label = document.createElement('label');
     label.textContent = text;
+
+    // Ao clicar no card inteiro
+    li.addEventListener('click', () => {
+        checkbox.checked = true;
+        moveToDone(checkbox);
+    });
+
+    // Impede o Safari de bugar com pesquisa ao arrastar
+    checkbox.addEventListener('mousedown', e => e.stopPropagation());
+
+    // Drag and drop
+    addDragEvents(li);
 
     li.appendChild(checkbox);
     li.appendChild(label);
     todoListElement.appendChild(li);
-
-    addDragEvents(li);
 }
 
 // Cria um item na lista de "concluídas"
