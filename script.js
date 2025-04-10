@@ -216,7 +216,8 @@ function addDragEvents(element) {
     element.setAttribute('draggable', true);
 
     element.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', '');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', 'drag-item');
         element.classList.add('dragging');
     });
 
