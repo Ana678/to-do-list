@@ -21,10 +21,17 @@ function closeModal() {
 function createTaskElement(text) {
     const li = document.createElement('li');
     li.classList.add('fade-in-up');
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    li.onclick = () => moveToDone(checkbox);
-    // checkbox.onchange = () => moveToDone(checkbox);
+
+    // Evita que clique no checkbox dispare drag
+    checkbox.addEventListener('mousedown', e => e.stopPropagation());
+
+    // Move para "concluídas" ao marcar o checkbox
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) moveToDone(checkbox);
+    });
 
     const label = document.createElement('label');
     label.textContent = text;
