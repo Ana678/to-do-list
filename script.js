@@ -21,25 +21,20 @@ function closeModal() {
 function createTaskElement(text) {
     const li = document.createElement('li');
     li.classList.add('fade-in-up');
-    li.setAttribute('draggable', true);
-
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
 
+    li.onclick = () => {
+        checkbox.checked = true;
+        li.classList.remove("fade-in-up");
+        li.classList.add("fade-out");
+        setTimeout(() => {
+            moveToDone(checkbox);
+        }, 400);
+    }
+
     const label = document.createElement('label');
     label.textContent = text;
-
-    // Ao clicar no card inteiro
-    li.addEventListener('click', () => {
-        checkbox.checked = true;
-        moveToDone(checkbox);
-    });
-
-    // Impede o Safari de bugar com pesquisa ao arrastar
-    checkbox.addEventListener('mousedown', e => e.stopPropagation());
-
-    // Drag and drop
-    addDragEvents(li);
 
     li.appendChild(checkbox);
     li.appendChild(label);
@@ -88,11 +83,9 @@ function deleteItemFromLocalStorage(taskText){
 // Move tarefa para a lista de concluídas
 function moveToDone(checkbox) {
     const li = checkbox.parentElement;
-    li.removeAttribute('draggable');
     const label = li.querySelector('label');
-    li.classList.remove("fade-in-up");
+    li.classList.remove("fade-out");
     li.classList.add("li-done");
-    checkbox.checked = true;
     checkbox.disabled = true;
     li.onclick = null;
 
@@ -182,7 +175,6 @@ window.onload = function () {
     const data = JSON.parse(saved);
     data.todo.forEach(task => createTaskElement(task));
     data.done.forEach(task => createTaskDoneElement(task));
-    enableDragAndDrop();
   }
 
   document.getElementById("taskInput").addEventListener('keydown', function (event) {
@@ -222,47 +214,3 @@ function updateTaskCounter() {
     }
 }
 
-function addDragEvents(element) {
-    element.setAttribute('draggable', true);
-
-    element.addEventListener('dragstart', e => {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', 'drag-item');
-        e.dataTransfer.setDragImage(new Image(), 0, 0);
-        element.classList.add('dragging');
-    });
-
-    element.addEventListener('dragend', () => {
-        element.classList.remove('dragging');
-        saveTasksToLocalStorage(); // salva nova ordem
-    });
-}
-
-function enableDragAndDrop() {
-    // Aplica os eventos a todos os itens existentes
-    const tasks = todoListElement.querySelectorAll('li');
-    tasks.forEach(task => addDragEvents(task));
-
-    // Evento no container da lista para detectar posição
-    todoListElement.addEventListener('dragover', e => {
-        e.preventDefault();
-        const dragging = document.querySelector('.dragging');
-        const siblings = [...todoListElement.querySelectorAll('li:not(.dragging)')];
-
-        let insertBefore = null;
-        for (const sibling of siblings) {
-            const box = sibling.getBoundingClientRect();
-            const offset = e.clientY - box.top - box.height / 2;
-            if (offset < 0) {
-                insertBefore = sibling;
-                break;
-            }
-        }
-
-        if (insertBefore) {
-            todoListElement.insertBefore(dragging, insertBefore);
-        } else {
-            todoListElement.appendChild(dragging);
-        }
-    });
-}

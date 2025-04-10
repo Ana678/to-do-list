@@ -102,21 +102,25 @@ body{
     background-color: #F1F1F1;
     border-radius: 10px;
     padding: 20px 24px;
-    align-items: center;
     cursor: pointer;
-    user-select: none;
-    -webkit-user-drag: none;
-    -webkit-user-select: none;
 }
 
 .div-list > li:hover, .list-element-create:hover{
     background-color: #F6F3FD;
+    color: #957cdb;
+    font-weight: 700;
+    text-transform: scale(1.2);
+}
+
+.div-list > li > label {
+    cursor: pointer;
 }
 
 .list-element-create{
     justify-content: center;
     color: #575757;
     border: none;
+    cursor: pointer;
 }
 
 .div-list > li > input[type="checkbox"]{
@@ -141,6 +145,7 @@ body{
 .div-list > .li-done > label {
     text-decoration: line-through;
     color: #B5A2EB;
+    cursor: unset;
 }
 
 .div-list > .li-done > i{
@@ -214,10 +219,10 @@ body{
     font-size: 14px;
   }
 
-  .draggable-task.dragging {
+  /* .draggable-task.dragging {
     opacity: 0.5;
     background: #eee;
-  }
+  } */
 
   @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {
     .modal input,
