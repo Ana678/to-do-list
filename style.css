@@ -92,6 +92,7 @@ body{
     gap: 16px;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .div-list > li, .list-element-create{
@@ -210,10 +211,49 @@ body{
     font-size: 14px;
   }
 
+  .draggable-task.dragging {
+    opacity: 0.5;
+    background: #eee;
+  }
+
   @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {
     .modal input,
     .modal textarea,
     .modal-content button {
       font-size: 16px;
     }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateX(20px); }
+  }
+
+  .fade-out {
+    animation: fadeOut 0.3s forwards;
+  }
+
+  @keyframes checkBounce {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  .check-animation {
+    animation: checkBounce 0.3s ease;
   }

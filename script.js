@@ -20,6 +20,7 @@ function closeModal() {
 // Cria um item da lista "a fazer"
 function createTaskElement(text) {
     const li = document.createElement('li');
+    li.classList.add('fade-in-up');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     li.onclick = () => moveToDone(checkbox);
@@ -31,6 +32,8 @@ function createTaskElement(text) {
     li.appendChild(checkbox);
     li.appendChild(label);
     todoListElement.appendChild(li);
+
+    addDragEvents(li);
 }
 
 // Cria um item na lista de "concluídas"
@@ -50,9 +53,12 @@ function createTaskDoneElement(text) {
 
     // Evento de exclusão
     trashIcon.addEventListener('click', () => {
-        deleteItemFromLocalStorage(text);
-        li.remove();
-        updateTaskCounter();
+        li.classList.add('fade-out');
+        setTimeout(() => {
+            deleteItemFromLocalStorage(label.textContent.trim());
+            li.remove();
+            updateTaskCounter();
+        }, 300);
     });
 
 
@@ -72,7 +78,9 @@ function deleteItemFromLocalStorage(taskText){
 // Move tarefa para a lista de concluídas
 function moveToDone(checkbox) {
     const li = checkbox.parentElement;
+    li.removeAttribute('draggable');
     const label = li.querySelector('label');
+    li.classList.remove("fade-in-up");
     li.classList.add("li-done");
     checkbox.checked = true;
     checkbox.disabled = true;
@@ -83,9 +91,12 @@ function moveToDone(checkbox) {
     trashIcon.textContent = 'delete';
 
     trashIcon.addEventListener('click', () => {
-        deleteItemFromLocalStorage(label.textContent.trim());
-        li.remove();
-        updateTaskCounter();
+        li.classList.add('fade-out');
+        setTimeout(() => {
+            deleteItemFromLocalStorage(label.textContent.trim());
+            li.remove();
+            updateTaskCounter();
+        }, 300);
     });
 
     li.appendChild(trashIcon);
@@ -97,12 +108,14 @@ function moveToDone(checkbox) {
     updateTaskCounter();
 }
 
-// Atualiza o que está visível: "a fazer" ou "concluído"
+// Atualiza Lista Visível: "a fazer" ou "concluído"
 function updateListVisibility() {
   const todoActive = todoButtonElement.classList.contains("active");
 
   todoListElement.style.display = todoActive ? "flex" : "none";
   doneListElement.style.display = todoActive ? "none" : "flex";
+
+  document.getElementById("buttonAddToList").style.display = todoActive ? "flex" : "none";
 }
 
 // Salva tarefas no localStorage
@@ -126,14 +139,23 @@ function saveTasksToLocalStorage() {
 
 // Adiciona nova tarefa vinda da modal
 function addTaskFromModal() {
-  const input = document.getElementById('taskInput');
-  const taskText = input.value.trim();
-  if (!taskText) return;
+    const input = document.getElementById('taskInput');
+    const taskText = input.value.trim();
+    if (!taskText) return;
 
-  createTaskElement(taskText);
-  closeModal();
-  saveTasksToLocalStorage();
-  updateTaskCounter();
+    // Verifica duplicata
+    const allTasks = [...todoListElement.children, ...doneListElement.children]
+      .map(li => li.querySelector('label')?.textContent.trim().toLowerCase());
+
+    if (allTasks.includes(taskText.toLowerCase())) {
+      alert("Essa tarefa já existe!");
+      return;
+    }
+
+    createTaskElement(taskText);
+    closeModal();
+    saveTasksToLocalStorage();
+    updateTaskCounter();
 }
 
 // Carrega tarefas ao iniciar
@@ -150,6 +172,7 @@ window.onload = function () {
     const data = JSON.parse(saved);
     data.todo.forEach(task => createTaskElement(task));
     data.done.forEach(task => createTaskDoneElement(task));
+    enableDragAndDrop();
   }
 
   document.getElementById("taskInput").addEventListener('keydown', function (event) {
@@ -187,4 +210,47 @@ function updateTaskCounter() {
     }else{
         counterElement.textContent = `${todoListElement.children.length}/${totalTasks} • ${Math.round(todoListElement.children.length*100/totalTasks) || 0}% das tarefas a serem feitas`;
     }
-  }
+}
+
+function addDragEvents(element) {
+    element.setAttribute('draggable', true);
+
+    element.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', null); // necessário pro Firefox
+        element.classList.add('dragging');
+    });
+
+    element.addEventListener('dragend', () => {
+        element.classList.remove('dragging');
+        saveTasksToLocalStorage(); // salva nova ordem
+    });
+}
+
+function enableDragAndDrop() {
+    // Aplica os eventos a todos os itens existentes
+    const tasks = todoListElement.querySelectorAll('li');
+    tasks.forEach(task => addDragEvents(task));
+
+    // Evento no container da lista para detectar posição
+    todoListElement.addEventListener('dragover', e => {
+        e.preventDefault();
+        const dragging = document.querySelector('.dragging');
+        const siblings = [...todoListElement.querySelectorAll('li:not(.dragging)')];
+
+        let insertBefore = null;
+        for (const sibling of siblings) {
+            const box = sibling.getBoundingClientRect();
+            const offset = e.clientY - box.top - box.height / 2;
+            if (offset < 0) {
+                insertBefore = sibling;
+                break;
+            }
+        }
+
+        if (insertBefore) {
+            todoListElement.insertBefore(dragging, insertBefore);
+        } else {
+            todoListElement.appendChild(dragging);
+        }
+    });
+}
