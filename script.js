@@ -216,7 +216,7 @@ function addDragEvents(element) {
     element.setAttribute('draggable', true);
 
     element.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', null); // necessário pro Firefox
+        e.dataTransfer.setData('text/plain', '');
         element.classList.add('dragging');
     });
 
